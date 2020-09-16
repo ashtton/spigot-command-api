@@ -7,7 +7,7 @@ This is a Spigot Command API made by me, it's extremely useful & easy to use.
 Copy and paste the code at the bottom of the page, into a new class called something like 'ACommand'.\
 \
 In your onEnable() initialize each command by doing
-```
+```java
 new CommandClassName();
 ```
 After initializing each command here, just create the classes and make them extend ACommand.\
