@@ -8,7 +8,7 @@ Copy and paste the code at the bottom of the page, into a new class called somet
 \
 In your onEnable() initialize each command by doing
 ```java
-new CommandClassName();
+new ExampleCommand();
 ```
 After initializing each command here, just create the classes and make them extend ACommand.\
 \
