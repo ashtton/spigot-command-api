@@ -1,5 +1,4 @@
-# SpigotCommandAPI
-
+# spigot-command-api
 This is a Spigot Command API made by me, it's extremely useful & easy to use.
 
 
