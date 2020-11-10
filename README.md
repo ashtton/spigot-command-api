@@ -13,7 +13,7 @@ After initializing each command here, just create the classes and make them exte
 \
 Here's an example command
 ```java
-public class ExampleCommand extends ACommand {
+public class ExampleCommand extends HCommand {
     // You can now register how ever many subcommands and regular commands you'd like
     
     // This is a basic command
@@ -45,7 +45,7 @@ public class ExampleCommand extends ACommand {
 \
 That's all there is to it, you don't need to put your command in your plugin.yml or anything.
 
-**Actual code - put in ACommand.class**
+**Actual code - put in HCommand.class**
 ```java
 public abstract class HCommand {
     private final Object obj;
