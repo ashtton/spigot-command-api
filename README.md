@@ -83,10 +83,10 @@ public abstract class HCommand {
                     commands.get(name.toLowerCase()).setAliases(Arrays.asList(commandAnnotation.aliases()));
 
                     try {
-                        Field cmdMap = Core.getInstance().getPlugin().getServer().getClass().getDeclaredField("commandMap");
+                        Field cmdMap = MAIN_CLASS_INSTANCE.getServer().getClass().getDeclaredField("commandMap");
                         cmdMap.setAccessible(true);
 
-                        ((org.bukkit.command.CommandMap)    cmdMap.get(Core.getInstance().getPlugin().getServer())).register(Core.getInstance().getPlugin().getDescription().getName(), commands.get(name.toLowerCase()));
+                        ((org.bukkit.command.CommandMap)    cmdMap.get(MAIN_CLASS_INSTANCE.getServer())).register(MAIN_CLASS_INSTANCE.getDescription().getName(), commands.get(name.toLowerCase()));
                     } catch(Exception ex) { ex.printStackTrace(); }
                 }
             }
