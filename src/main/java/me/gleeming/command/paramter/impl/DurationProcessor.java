@@ -9,7 +9,7 @@ public class DurationProcessor implements Processor {
     public Object process(CommandSender sender, String supplied) {
         long duration = parseDuration(supplied);
 
-        if(duration == -1) {
+        if(duration == 0) {
             sender.sendMessage(ChatColor.RED + "You have entered an invalid duration.");
             return null;
         }
@@ -23,18 +23,20 @@ public class DurationProcessor implements Processor {
      * @param toParse String to parse
      * @return Duration
      */
-    public long parseDuration(String toParse) {
+    public static long parseDuration(String toParse) {
         try {
             toParse = toParse.toUpperCase();
+            if(toParse.equals("FOREVER") || toParse.equals("EVER") || toParse.equals("NEVER")) return -1;
+
             long value = Long.parseLong(toParse.substring(0, toParse.length() - 1));
 
             if(toParse.endsWith("S")) value = value * 1000;
             else if(toParse.endsWith("M")) value = value * 1000 * 60;
             else if(toParse.endsWith("H")) value = value * 1000 * 60 * 60;
             else if(toParse.endsWith("D")) value = value * 1000 * 60 * 60 * 12;
-            else return -1;
+            else return 0;
 
             return value;
-        } catch(Exception ignored) { return -1; }
+        } catch(Exception ignored) { return 0; }
     }
 }

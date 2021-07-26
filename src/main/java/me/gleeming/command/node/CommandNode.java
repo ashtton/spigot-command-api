@@ -63,7 +63,7 @@ public class CommandNode {
 
         // Register bukkit command if it doesn't exist
         names.forEach(name -> {
-            if(!BukkitCommand.getCommands().containsKey(name.toLowerCase())) new BukkitCommand(name);
+            if(!BukkitCommand.getCommands().containsKey(name.split(" ")[0].toLowerCase())) new BukkitCommand(name.split(" ")[0].toLowerCase());
         });
 
         // Add node to array list
@@ -80,14 +80,16 @@ public class CommandNode {
         int level = 0;
 
         for(String name : names) {
-            if(name.contains(label)) level += 1;
-            if(label.contains(name)) level += 1;
+            if(name.equals(label)) level += 2;
+            if(name.split(" ")[0].equals(label)) level++;
+            if(name.contains(label)) level++;
+            if(label.contains(name)) level++;
 
             String[] splitName = name.split(" ");
             for(String s : splitName) if(s.toLowerCase().contains(label.toLowerCase())) level += 1;
         }
 
-        if(requiredArgumentsLength() - args.length < 2) level += 3;
+        if(requiredArgumentsLength() - args.length == 1) level += 3;
         if(args.length == requiredArgumentsLength()) level++;
 
         return level;
@@ -97,6 +99,21 @@ public class CommandNode {
      * Sends a player the usage message of this command
      */
     public void sendUsageMessage(CommandSender sender) {
+        if(consoleOnly && sender instanceof Player) {
+            sender.sendMessage(ChatColor.RED + "This command can only be executed by console.");
+            return;
+        }
+
+        if(playerOnly && sender instanceof ConsoleCommandSender) {
+            sender.sendMessage(ChatColor.RED + "You must be a player to execute this command.");
+            return;
+        }
+
+        if(!permission.equals("") && !sender.hasPermission(permission)) {
+            sender.sendMessage(ChatColor.RED + "I'm sorry, although you do not have permission to execute this command.");
+            return;
+        }
+
         StringBuilder builder = new StringBuilder(ChatColor.RED + "Usage: /" + names.get(0) + " ");
         parameters.forEach(param -> {
             if(param.isRequired()) builder.append("<").append(param.getName()).append(param.isConcated() ? ".." : "").append(">");
@@ -158,7 +175,7 @@ public class CommandNode {
     @SneakyThrows
     public void execute(CommandSender sender, String[] args) {
         // Checks if the player has permission
-        if(!sender.hasPermission(permission)) {
+        if(!permission.equals("") && !sender.hasPermission(permission)) {
             sender.sendMessage(ChatColor.RED + "I'm sorry, although you do not have permission to execute this command.");
             return;
         }
