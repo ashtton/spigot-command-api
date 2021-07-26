@@ -88,9 +88,8 @@ public class MainClass extends JavaPlugin {
         // You initialize all your processors
         // in your on enable like this:
         
-        ParamProcessor.getProcessors().put(CustomEnum.class, new CustomEnumProcessor());
-        
         // Make sure you do this before registering your commands
+        ParamProcessor.getProcessors().put(CustomEnum.class, new CustomEnumProcessor());
     }
 }
 
