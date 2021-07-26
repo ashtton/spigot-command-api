@@ -11,7 +11,7 @@ At the moment, this command api will parse the following values for you.\
 You can also create custom processors which there is an example of at the bottom of this page.
 * **Numbers:** Integer, Long, Double
 * **Players:** Player, OfflinePlayer
-* **Misc:** World, Boolean
+* **Misc:** World, Boolean, Duration
 ### Command Example
 This example shows you the basics of using the api
 ```java

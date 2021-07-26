@@ -2,6 +2,7 @@ package me.gleeming.command.paramter;
 
 import lombok.Data;
 import lombok.Getter;
+import me.gleeming.command.duration.Duration;
 import me.gleeming.command.node.ArgumentNode;
 import me.gleeming.command.paramter.impl.*;
 import org.bukkit.OfflinePlayer;
@@ -43,5 +44,6 @@ public class ParamProcessor {
         processors.put(OfflinePlayer.class, new OfflinePlayerProcessor());
         processors.put(World.class, new WorldProcessor());
         processors.put(Boolean.class, new BooleanProcessor());
+        processors.put(Duration.class, new DurationProcessor());
     }
 }
