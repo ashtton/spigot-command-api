@@ -2,6 +2,7 @@ package me.gleeming.command.paramter;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import me.gleeming.command.duration.Duration;
 import me.gleeming.command.node.ArgumentNode;
 import me.gleeming.command.paramter.impl.*;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 @Data
 public class ParamProcessor {
     @Getter private static final HashMap<Class<?>, Processor> processors = new HashMap<>();
+    private static boolean loaded = false;
 
     private final ArgumentNode node;
     private final String supplied;
@@ -25,7 +27,7 @@ public class ParamProcessor {
      * @return Processed Object
      */
     public Object get() {
-        if(processors.size() == 0) loadProcessors();
+        if(!loaded) loadProcessors();
 
         Processor processor = processors.get(node.getParameter().getType());
         if(processor == null) return supplied;
@@ -37,6 +39,8 @@ public class ParamProcessor {
      * Loads the processors
      */
     public static void loadProcessors() {
+        loaded = true;
+
         processors.put(Integer.class, new IntegerProcessor());
         processors.put(Long.class, new LongProcessor());
         processors.put(Double.class, new DoubleProcessor());

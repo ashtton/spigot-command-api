@@ -43,7 +43,7 @@ public class BukkitCommand extends Command {
                     if(label.toLowerCase().equals(name)) {
                         helpNode = node;
                         lastSize = 100;
-                        continue;
+                        break;
                     }
 
                     String[] split = name.split(" ");

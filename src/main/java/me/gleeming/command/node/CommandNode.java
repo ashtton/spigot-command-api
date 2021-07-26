@@ -87,6 +87,7 @@ public class CommandNode {
             for(String s : splitName) if(s.toLowerCase().contains(label.toLowerCase())) level += 1;
         }
 
+        if(requiredArgumentsLength() - args.length < 2) level += 3;
         if(args.length == requiredArgumentsLength()) level++;
 
         return level;
@@ -120,11 +121,16 @@ public class CommandNode {
         // Checks if label even starts with any of the names
         if(!containsName) return false;
 
-        // Checks if there is a concatted argument as the last argument
+        // Checks if there is a concatted argument or a non required as the last argument
         boolean lastConcatted = parameters.size() > 0 && parameters.get(parameters.size() - 1).isConcated();
+        boolean lastNonRequired = parameters.size() > 0 && !parameters.get(parameters.size() - 1).isRequired();
 
         // Checks if the argument length is even with the list
-        if(args.length != requiredArgumentsLength() && !lastConcatted) return false;
+        if(!lastNonRequired) {
+            if (args.length != requiredArgumentsLength() && !lastConcatted) return false;
+        } else {
+            if(args.length < requiredArgumentsLength()) return false;
+        }
 
         // Checks if concatted parameter is ever reached
         if(lastConcatted && args.length < requiredArgumentsLength()) return false;
@@ -138,7 +144,7 @@ public class CommandNode {
      * @return Required Length
      */
     public int requiredArgumentsLength() {
-        int requiredArgumentsLength = 0;
+        int requiredArgumentsLength = names.get(0).split(" ").length - 1;
         for(ArgumentNode node : parameters) if(node.isRequired()) requiredArgumentsLength++;
         return requiredArgumentsLength;
     }
