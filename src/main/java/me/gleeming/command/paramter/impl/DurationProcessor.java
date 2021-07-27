@@ -26,7 +26,7 @@ public class DurationProcessor implements Processor {
     public static long parseDuration(String toParse) {
         try {
             toParse = toParse.toUpperCase();
-            if(toParse.equals("FOREVER") || toParse.equals("EVER") || toParse.equals("NEVER")) return -1;
+            if(toParse.equals("FOREVER") || toParse.equals("EVER") || toParse.equals("NEVER") || toParse.equals("PERM") || toParse.equals("PERMANENT")) return -1;
 
             long value = Long.parseLong(toParse.substring(0, toParse.length() - 1));
 
