@@ -82,18 +82,27 @@ public class BukkitCommand extends Command {
             return false;
         }
 
-        CommandNode notConcat = null;
+        List<CommandNode> notConcat = new ArrayList<>();
         for(CommandNode node : couldExecute)
             if(node.getParameters().size() < 1 || !node.getParameters().get(node.getParameters().size() - 1).isConcated())
-                notConcat = node;
+                notConcat.add(node);
 
-        if(notConcat == null) {
+        if(notConcat.size() == 0) {
             System.out.println("[Command] WARNING: You have two concatted functions fighting over each other.");
             couldExecute.get(0).execute(sender, args);
             return false;
         }
 
-        notConcat.execute(sender, args);
+        for(CommandNode node : notConcat) {
+            for(String name : node.getNames()) {
+                if(name.split(" ")[0].equalsIgnoreCase(label)) {
+                    node.execute(sender, args);
+                    return false;
+                }
+            }
+        }
+
+        notConcat.get(0).execute(sender, args);
         return false;
     }
 }
