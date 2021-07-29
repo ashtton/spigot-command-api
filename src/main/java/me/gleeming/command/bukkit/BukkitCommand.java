@@ -89,9 +89,9 @@ public class BukkitCommand extends Command {
 
         if (notConcat.size() == 0) {
             int toExec = 0;
-            for (int i = 0; i < couldExecute.size(); i++){
+            for (int i = 0; i < couldExecute.size(); i++) {
                 for (String l : couldExecute.get(i).getNames()) {
-                    if (l == label) {
+                    if (l+"" == label+"") {
                         toExec = i;
                     }
                 }
