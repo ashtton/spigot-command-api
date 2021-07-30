@@ -87,9 +87,16 @@ public class BukkitCommand extends Command {
             if(node.getParameters().size() < 1 || !node.getParameters().get(node.getParameters().size() - 1).isConcated())
                 notConcat.add(node);
 
-        if(notConcat.size() == 0) {
-            System.out.println("[Command] WARNING: You have two concatted functions fighting over each other.");
-            couldExecute.get(0).execute(sender, args);
+        if (notConcat.size() == 0) {
+            int toExec = 0;
+            for (int i = 0; i < couldExecute.size(); i++) {
+                for (String l : couldExecute.get(i).getNames()) {
+                    if (l+"" == label+"") {
+                        toExec = i;
+                    }
+                }
+            }
+            couldExecute.get(toExec).execute(sender, args);
             return false;
         }
 
