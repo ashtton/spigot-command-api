@@ -88,15 +88,13 @@ public class BukkitCommand extends Command {
                 notConcat.add(node);
 
         if (notConcat.size() == 0) {
-            int toExec = 0;
-            for (int i = 0; i < couldExecute.size(); i++) {
-                for (String l : couldExecute.get(i).getNames()) {
-                    if (l+"" == label+"") {
-                        toExec = i;
-                    }
-                }
-            }
-            couldExecute.get(toExec).execute(sender, args);
+            // Cleaned code from https://github.com/GleemingKnight/spigot-command-api/pull/3
+            // which addressed fixing mistake in https://github.com/GleemingKnight/spigot-command-api/issues/1
+            couldExecute.stream()
+                    .filter(node -> node.getNames().contains(label.toLowerCase()))
+                    .limit(1)
+                    .forEach(node -> node.execute(sender, args));
+
             return false;
         }
 
