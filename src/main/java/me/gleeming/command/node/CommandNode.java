@@ -80,6 +80,7 @@ public class CommandNode {
         int level = 0;
 
         for(String name : names) {
+            if(name.startsWith(label)) level+=2;
             if(name.equals(label)) level += 2;
             if(name.split(" ")[0].equals(label)) level++;
             if(name.contains(label)) level++;
@@ -133,7 +134,7 @@ public class CommandNode {
      */
     public boolean couldExecute(String label, String[] args) {
         boolean containsName = false;
-        for(String name : names) if(label.toLowerCase().startsWith(name)) { containsName = true; break; }
+        for(String name : names) if(name.toLowerCase().startsWith(label.toLowerCase())) { containsName = true; break; }
 
         // Checks if label even starts with any of the names
         if(!containsName) return false;
@@ -192,19 +193,22 @@ public class CommandNode {
             return;
         }
 
+        // Calculates the amount of arguments in the name
+        int nameArgs = (names.get(0).split(" ").length - 1);
+
         List<Object> objects = new ArrayList<>(Collections.singletonList(sender));
-        for(int i = 0; i < args.length; i++) {
+        for(int i = 0; i < args.length - nameArgs; i++) {
             ArgumentNode node = parameters.get(i);
 
             // Checks if the node is concatted
             if(node.isConcated()) {
                 StringBuilder stringBuilder = new StringBuilder();
-                for(int x = i; x < args.length; x++) stringBuilder.append(args[x]).append(" ");
+                for(int x = i; x < args.length; x++) stringBuilder.append(args[x + nameArgs]).append(" ");
                 objects.add(stringBuilder.toString());
                 break;
             }
 
-            String suppliedArgument = args[i];
+            String suppliedArgument = args[i + nameArgs];
             Object object = new ParamProcessor(node, suppliedArgument, sender).get();
 
             // If the object is returning null then that means there was a problem parsing
@@ -212,7 +216,7 @@ public class CommandNode {
             objects.add(object);
         }
 
-        int difference = (parameters.size() - requiredArgumentsLength()) - (args.length - requiredArgumentsLength());
+        int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
         for(int i = 0; i < difference; i++) objects.add(null);
 
         if(async) Bukkit.getScheduler().runTaskAsynchronously(CommandHandler.getPlugin(), () -> {try { method.invoke(parentClass, objects.toArray()); } catch(Exception ex) { ex.printStackTrace(); }});
