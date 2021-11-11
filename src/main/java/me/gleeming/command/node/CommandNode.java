@@ -22,7 +22,7 @@ public class CommandNode {
     @Getter private static final HashMap<Class<?>, Object> instances = new HashMap<>();
 
     // Command information
-    @Getter private final List<String> names = new ArrayList<>();
+    @Getter private final ArrayList<String> names = new ArrayList<>();
     @Getter private final String permission;
     @Getter private final String description;
     @Getter private final boolean async;
@@ -67,7 +67,9 @@ public class CommandNode {
         });
 
         // Makes it so you can use /plugin:command
-        names.forEach(name -> names.add(CommandHandler.getPlugin().getName() + ":" + name.toLowerCase()));
+        List<String> toAdd = new ArrayList<>();
+        names.forEach(name -> toAdd.add(CommandHandler.getPlugin().getName() + ":" + name.toLowerCase()));
+        names.addAll(toAdd);
 
         // Add node to array list
         nodes.add(this);
