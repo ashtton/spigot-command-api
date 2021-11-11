@@ -40,10 +40,7 @@ public class CommandNode {
 
     public CommandNode(Object parentClass, Method method, Command command) {
         // Loads names
-        Arrays.stream(command.names()).forEach(name -> {
-            names.add(name.toLowerCase());
-            names.add(CommandHandler.getPlugin().getName() + ":" + name.toLowerCase());
-        });
+        Arrays.stream(command.names()).forEach(name -> names.add(name.toLowerCase()));
 
         // Retrieve information from annotation
         this.permission = command.permission();
@@ -68,6 +65,9 @@ public class CommandNode {
         names.forEach(name -> {
             if(!BukkitCommand.getCommands().containsKey(name.split(" ")[0].toLowerCase())) new BukkitCommand(name.split(" ")[0].toLowerCase());
         });
+
+        // Makes it so you can use /plugin:command
+        names.forEach(name -> names.add(CommandHandler.getPlugin().getName() + ":" + name.toLowerCase()));
 
         // Add node to array list
         nodes.add(this);
