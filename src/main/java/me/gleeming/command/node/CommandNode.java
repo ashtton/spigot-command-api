@@ -40,7 +40,10 @@ public class CommandNode {
 
     public CommandNode(Object parentClass, Method method, Command command) {
         // Loads names
-        Arrays.stream(command.names()).forEach(name -> names.add(name.toLowerCase()));
+        Arrays.stream(command.names()).forEach(name -> {
+            names.add(name.toLowerCase());
+            names.add(CommandHandler.getPlugin().getName() + ":" + name.toLowerCase());
+        });
 
         // Retrieve information from annotation
         this.permission = command.permission();
