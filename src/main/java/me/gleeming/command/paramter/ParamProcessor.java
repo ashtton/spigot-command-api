@@ -2,7 +2,6 @@ package me.gleeming.command.paramter;
 
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import me.gleeming.command.duration.Duration;
 import me.gleeming.command.node.ArgumentNode;
 import me.gleeming.command.paramter.impl.*;

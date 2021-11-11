@@ -134,7 +134,18 @@ public class CommandNode {
      */
     public boolean couldExecute(String label, String[] args) {
         boolean containsName = false;
-        for(String name : names) if(name.toLowerCase().startsWith(label.toLowerCase())) { containsName = true; break; }
+        for(String name : names) {
+            StringBuilder actualLabel = new StringBuilder(label);
+
+            if(args.length > 0 && name.split(" ").length > 1)
+                for(int i = 0; i < (name.split(" ").length - 1); i++)
+                    actualLabel.append(" ").append(args[i]);
+
+            if(name.equalsIgnoreCase(actualLabel.toString().trim().toLowerCase())) {
+                containsName = true;
+                break;
+            }
+        }
 
         // Checks if label even starts with any of the names
         if(!containsName) return false;
