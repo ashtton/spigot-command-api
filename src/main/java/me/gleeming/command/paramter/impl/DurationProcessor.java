@@ -33,7 +33,7 @@ public class DurationProcessor implements Processor {
             if(toParse.endsWith("S")) value = value * 1000;
             else if(toParse.endsWith("M")) value = value * 1000 * 60;
             else if(toParse.endsWith("H")) value = value * 1000 * 60 * 60;
-            else if(toParse.endsWith("D")) value = value * 1000 * 60 * 60 * 12;
+            else if(toParse.endsWith("D")) value = value * 1000 * 60 * 60 * 24;
             else return 0;
 
             return value;
