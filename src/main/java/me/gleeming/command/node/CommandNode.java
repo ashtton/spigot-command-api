@@ -142,9 +142,8 @@ public class CommandNode {
         for(String name : names) {
             StringBuilder actualLabel = new StringBuilder(label);
 
-            if(args.length > 0 && name.split(" ").length > 1)
-                for(int i = 0; i < (name.split(" ").length - 1); i++)
-                    actualLabel.append(" ").append(args[i]);
+            for(String arg : args)
+                actualLabel.append(" ").append(arg);
 
             if(name.equalsIgnoreCase(actualLabel.toString().trim().toLowerCase())) {
                 containsName = true;
