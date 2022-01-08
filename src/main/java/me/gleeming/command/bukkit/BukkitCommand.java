@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,9 +32,12 @@ public class BukkitCommand extends Command {
     @SneakyThrows
     public boolean execute(CommandSender sender, String label, String[] args) {
         List<CommandNode> couldExecute = new ArrayList<>();
-        CommandNode.getNodes().forEach(node -> {
-            if(node.couldExecute(label.toLowerCase(), args)) couldExecute.add(node);
-        });
+        CommandNode.getNodes().stream()
+                .sorted(Comparator.comparingInt(nodeOne -> nodeOne.getMatchProbability(label, args)))
+                .limit(1)
+                .forEach(node -> {
+                    if (node.couldExecute(label.toLowerCase(), args)) couldExecute.add(node);
+                });
 
         if(couldExecute.size() == 0) {
             HelpNode helpNode = null;

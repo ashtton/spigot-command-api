@@ -145,7 +145,7 @@ public class CommandNode {
             for(String arg : args)
                 actualLabel.append(" ").append(arg);
 
-            if(name.equalsIgnoreCase(actualLabel.toString().trim().toLowerCase())) {
+            if(actualLabel.toString().startsWith(name)) {
                 containsName = true;
                 break;
             }
