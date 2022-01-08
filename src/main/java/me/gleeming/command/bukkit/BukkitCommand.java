@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BukkitCommand extends Command {
     @Getter private static final HashMap<String, BukkitCommand> commands = new HashMap<>();
@@ -31,13 +32,10 @@ public class BukkitCommand extends Command {
 
     @SneakyThrows
     public boolean execute(CommandSender sender, String label, String[] args) {
-        List<CommandNode> couldExecute = new ArrayList<>();
-        CommandNode.getNodes().stream()
-                .sorted(Comparator.comparingInt(nodeOne -> nodeOne.getMatchProbability(label, args)))
-                .limit(1)
-                .forEach(node -> {
-                    if (node.couldExecute(label.toLowerCase(), args)) couldExecute.add(node);
-                });
+        List<CommandNode> couldExecute = CommandNode.getNodes().stream()
+                .sorted(Comparator.comparingInt(node -> node.getMatchProbability(label, args)))
+                .filter(node -> node.couldExecute(label, args))
+                .collect(Collectors.toList());
 
         if(couldExecute.size() == 0) {
             HelpNode helpNode = null;
