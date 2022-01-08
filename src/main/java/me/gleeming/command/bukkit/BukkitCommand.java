@@ -33,8 +33,8 @@ public class BukkitCommand extends Command {
     @SneakyThrows
     public boolean execute(CommandSender sender, String label, String[] args) {
         List<CommandNode> couldExecute = CommandNode.getNodes().stream()
-                .sorted(Comparator.comparingInt(node -> node.getMatchProbability(label, args)))
                 .filter(node -> node.couldExecute(label, args))
+                .sorted(Comparator.comparingInt(node -> node.getMatchProbability(label, args)))
                 .collect(Collectors.toList());
 
         if(couldExecute.size() == 0) {
