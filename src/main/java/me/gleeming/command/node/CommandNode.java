@@ -111,7 +111,7 @@ public class CommandNode {
                 int actualLength = args.length - (nameLength - 1);
 
                 if(requiredParameters == actualLength || parameters.size() == actualLength) {
-                    probability.addAndGet(100);
+                    probability.addAndGet(125);
                     return;
                 }
 
@@ -123,8 +123,8 @@ public class CommandNode {
 
                 probability.addAndGet(75);
 
-                if(actualLength < requiredParameters)
-                    probability.addAndGet(-25);
+                if(actualLength > requiredParameters)
+                    probability.addAndGet(25);
 
                 if(sender instanceof Player && consoleOnly)
                     probability.addAndGet(-25);
