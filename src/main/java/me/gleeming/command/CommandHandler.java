@@ -13,6 +13,7 @@ import org.reflections.vfs.Vfs;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommandHandler {
     @Getter @Setter private static Plugin plugin;
@@ -66,7 +67,11 @@ public class CommandHandler {
             Help help = method.getAnnotation(Help.class);
             if(help == null) return;
 
-            new HelpNode(commandClass, help.names(), method);
+            HelpNode helpNode = new HelpNode(commandClass, help.names(), method);
+            CommandNode.getNodes().forEach(node -> node.getNames().forEach(name -> Arrays.stream(help.names())
+                    .map(String::toLowerCase)
+                    .filter(helpName -> name.toLowerCase().startsWith(helpName))
+                    .forEach(helpName -> node.getHelpNodes().add(helpNode))));
         });
     }
 }

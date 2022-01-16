@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import me.gleeming.command.Command;
 import me.gleeming.command.CommandHandler;
 import me.gleeming.command.bukkit.BukkitCommand;
+import me.gleeming.command.help.HelpNode;
 import me.gleeming.command.paramter.Param;
 import me.gleeming.command.paramter.ParamProcessor;
 import org.bukkit.Bukkit;
@@ -17,26 +18,30 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Getter
 public class CommandNode {
     @Getter private static final List<CommandNode> nodes = new ArrayList<>();
     @Getter private static final HashMap<Class<?>, Object> instances = new HashMap<>();
 
     // Command information
-    @Getter private final ArrayList<String> names = new ArrayList<>();
-    @Getter private final String permission;
-    @Getter private final String description;
-    @Getter private final boolean async;
+    private final ArrayList<String> names = new ArrayList<>();
+    private final String permission;
+    private final String description;
+    private final boolean async;
 
     // Executor information
-    @Getter private final boolean playerOnly;
-    @Getter private final boolean consoleOnly;
+    private final boolean playerOnly;
+    private final boolean consoleOnly;
 
     // Reflect information
-    @Getter private final Object parentClass;
-    @Getter private final Method method;
+    private final Object parentClass;
+    private final Method method;
 
     // Arguments information
-    @Getter private final List<ArgumentNode> parameters = new ArrayList<>();
+    private final List<ArgumentNode> parameters = new ArrayList<>();
+
+    // The help nodes associated with this node
+    private final List<HelpNode> helpNodes = new ArrayList<>();
 
     public CommandNode(Object parentClass, Method method, Command command) {
         // Loads names
@@ -53,7 +58,7 @@ public class CommandNode {
         this.parentClass = parentClass;
         this.method = method;
 
-        // Register all of the argument nodes
+        // Register all the argument nodes
         Arrays.stream(method.getParameters()).forEach(parameter -> {
             Param param = parameter.getAnnotation(Param.class);
             if(param == null) return;
@@ -76,29 +81,64 @@ public class CommandNode {
     }
 
     /**
-     * Gets the probability that a player is talking about this command
-     *
-     * @param label Label
-     * @param args Args
+     * Gets the probably that a player is referring to
+     * this command whenever executing a command
+     * @param args Arguments
+     * @return Match Probability
      */
-    public int getMatchProbability(String label, String[] args) {
-        int level = 0;
+    public int getMatchProbability(CommandSender sender, String label, String[] args) {
+        AtomicInteger probability = new AtomicInteger(0);
 
-        for(String name : names) {
-            if(name.startsWith(label)) level+=2;
-            if(name.equals(label)) level += 2;
-            if(name.split(" ")[0].equals(label)) level++;
-            if(name.contains(label)) level++;
-            if(label.contains(name)) level++;
+        this.names.forEach(name -> {
+            StringBuilder nameLabel = new StringBuilder(label).append(" ");
+            int nameLength = name.split(" ").length;
 
-            String[] splitName = name.split(" ");
-            for(String s : splitName) if(s.toLowerCase().contains(label.toLowerCase())) level += 1;
-        }
+            for(int i = 1; i < nameLength; i++) {
+                if(args.length < i) return;
+                nameLabel.append(args[i - 1]).append(" ");
+            }
 
-        if(requiredArgumentsLength() - args.length == 1) level += 3;
-        if(args.length == requiredArgumentsLength()) level++;
+            if(name.equalsIgnoreCase(nameLabel.toString().trim())) {
+                if(this.parameters.size() == 0) {
+                    probability.addAndGet(100);
+                    return;
+                }
 
-        return level;
+                int requiredParameters = (int) this.parameters.stream()
+                        .filter(ArgumentNode::isRequired)
+                        .count();
+
+                int actualLength = args.length - (nameLength - 1);
+
+                if(requiredParameters == actualLength || parameters.size() == actualLength) {
+                    probability.addAndGet(100);
+                    return;
+                }
+
+                ArgumentNode lastArgument = this.parameters.get(this.parameters.size() - 1);
+                if(lastArgument.isConcated() && actualLength > requiredParameters) {
+                    probability.addAndGet(90);
+                    return;
+                }
+
+                probability.addAndGet(75);
+
+                if(actualLength < requiredParameters)
+                    probability.addAndGet(-25);
+
+                if(sender instanceof Player && consoleOnly)
+                    probability.addAndGet(-25);
+
+                if(!(sender instanceof Player) && playerOnly)
+                    probability.addAndGet(-25);
+
+                if(!permission.equals("") && !sender.hasPermission(permission))
+                    probability.addAndGet(-25);
+
+            }
+        });
+
+        return probability.get();
     }
 
     /**
@@ -129,47 +169,6 @@ public class CommandNode {
 
         // Sends the usage message
         sender.sendMessage(builder.toString());
-    }
-
-    /**
-     * Checks whether or not a node could execute a command
-     *
-     * @param label Label
-     * @param args Arguments
-     */
-    public boolean couldExecute(String label, String[] args) {
-        boolean containsName = false;
-        for(String name : names) {
-            StringBuilder actualLabel = new StringBuilder(label);
-
-            for(String arg : args)
-                actualLabel.append(" ").append(arg);
-
-            if(actualLabel.toString().startsWith(name)) {
-                containsName = true;
-                break;
-            }
-        }
-
-        // Checks if label even starts with any of the names
-        if(!containsName) return false;
-
-        // Checks if there is a concatted argument or a non required as the last argument
-        boolean lastConcatted = parameters.size() > 0 && parameters.get(parameters.size() - 1).isConcated();
-        boolean lastNonRequired = parameters.size() > 0 && !parameters.get(parameters.size() - 1).isRequired();
-
-        // Checks if the argument length is even with the list
-        if(!lastNonRequired) {
-            if (args.length != requiredArgumentsLength() && !lastConcatted) return false;
-        } else {
-            if(args.length < requiredArgumentsLength()) return false;
-        }
-
-        // Checks if concatted parameter is ever reached
-        if(lastConcatted && args.length < requiredArgumentsLength()) return false;
-
-        // If all tests pass then the command is valid
-        return true;
     }
 
     /**
@@ -234,7 +233,13 @@ public class CommandNode {
         int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
         for(int i = 0; i < difference; i++) objects.add(null);
 
-        if(async) Bukkit.getScheduler().runTaskAsynchronously(CommandHandler.getPlugin(), () -> {try { method.invoke(parentClass, objects.toArray()); } catch(Exception ex) { ex.printStackTrace(); }});
-        else method.invoke(parentClass, objects.toArray());
+        if(async) {
+            Bukkit.getScheduler().runTaskAsynchronously(CommandHandler.getPlugin(), () -> {
+                try { method.invoke(parentClass, objects.toArray()); } catch(Exception exception) { exception.printStackTrace(); }
+            });
+            return;
+        }
+
+        method.invoke(parentClass, objects.toArray());
     }
 }
