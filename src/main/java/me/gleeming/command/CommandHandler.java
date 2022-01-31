@@ -1,6 +1,6 @@
 package me.gleeming.command;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.ClassPath;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -8,12 +8,8 @@ import me.gleeming.command.help.Help;
 import me.gleeming.command.help.HelpNode;
 import me.gleeming.command.node.CommandNode;
 import org.bukkit.plugin.Plugin;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.vfs.Vfs;
 
-import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CommandHandler {
     @Getter @Setter private static Plugin plugin;
@@ -24,21 +20,9 @@ public class CommandHandler {
      */
     @SneakyThrows
     public static void registerCommands(String path, Plugin plugin) {
-        CommandHandler.setPlugin(plugin);
-
-        Set<Class<?>> classes = new HashSet<>();
-        Collection<URL> urls = ClasspathHelper.forClassLoader(ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader(), plugin.getClass().getClassLoader());
-
-        if(urls.size() > 0) {
-            urls.forEach(url -> Vfs.fromURL(url).getFiles().forEach(file -> {
-                String name = file.getRelativePath().replace("/", ".").replace(".class", "");
-                try { if (name.startsWith(path)) classes.add(Class.forName(name)); } catch(ClassNotFoundException ex) { ex.printStackTrace(); }
-            }));
-        }
-
-        ImmutableSet.copyOf(classes).forEach(clazz -> {
-            try { registerCommands(clazz.newInstance()); } catch(Exception ex) { ex.printStackTrace(); }
-        });
+        ClassPath.from(plugin.getClass().getClassLoader()).getAllClasses().stream()
+                .filter(info -> info.getPackageName().startsWith(path))
+                .forEach(info -> registerCommands(info.load(), plugin));
     }
 
     /**

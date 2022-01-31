@@ -1,12 +1,15 @@
 package me.gleeming.command.paramter.impl;
 
-import me.gleeming.command.paramter.Processor;
+import me.gleeming.command.paramter.ProcessorComplete;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PlayerProcessor implements Processor {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class PlayerProcessor implements ProcessorComplete {
     public Object process(CommandSender sender, String supplied) {
         Player player = Bukkit.getPlayer(supplied);
 
@@ -16,5 +19,12 @@ public class PlayerProcessor implements Processor {
         }
 
         return player;
+    }
+
+    public List<String> tabComplete(CommandSender sender, String supplied) {
+        return Bukkit.getOnlinePlayers().stream()
+                .map(Player::getName)
+                .filter(name -> name.toLowerCase().startsWith(supplied.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }

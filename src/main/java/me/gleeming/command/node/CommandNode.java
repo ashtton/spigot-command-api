@@ -91,12 +91,11 @@ public class CommandNode {
 
         this.names.forEach(name -> {
             StringBuilder nameLabel = new StringBuilder(label).append(" ");
-            int nameLength = name.split(" ").length;
+            String[] splitName = name.split(" ");
+            int nameLength = splitName.length;
 
-            for(int i = 1; i < nameLength; i++) {
-                if(args.length < i) return;
-                nameLabel.append(args[i - 1]).append(" ");
-            }
+            for(int i = 1; i < nameLength; i++)
+                if(args.length - 1 >= i) nameLabel.append(args[i - 1]).append(" ");
 
             if(name.equalsIgnoreCase(nameLabel.toString().trim())) {
                 if(this.parameters.size() == 0) {
@@ -121,21 +120,32 @@ public class CommandNode {
                     return;
                 }
 
-                probability.addAndGet(75);
+                probability.addAndGet(50);
 
                 if(actualLength > requiredParameters)
-                    probability.addAndGet(25);
+                    probability.addAndGet(15);
 
                 if(sender instanceof Player && consoleOnly)
-                    probability.addAndGet(-25);
+                    probability.addAndGet(-15);
 
                 if(!(sender instanceof Player) && playerOnly)
-                    probability.addAndGet(-25);
+                    probability.addAndGet(-15);
 
                 if(!permission.equals("") && !sender.hasPermission(permission))
-                    probability.addAndGet(-25);
+                    probability.addAndGet(-15);
 
+                return;
             }
+
+            if(name.contains("faction")) {
+                System.out.println(nameLabel + " - " + name);
+            }
+
+            String[] labelSplit = nameLabel.toString().split(" ");
+            for(int i = 0; i < nameLength && i < labelSplit.length; i++)
+                if(splitName[i].equalsIgnoreCase(labelSplit[i]))
+                    probability.addAndGet(10);
+
         });
 
         return probability.get();
@@ -212,6 +222,7 @@ public class CommandNode {
 
         List<Object> objects = new ArrayList<>(Collections.singletonList(sender));
         for(int i = 0; i < args.length - nameArgs; i++) {
+            if(parameters.size() < i + 1) break;
             ArgumentNode node = parameters.get(i);
 
             // Checks if the node is concatted

@@ -1,11 +1,21 @@
 package me.gleeming.command.paramter.impl;
 
 import me.gleeming.command.duration.Duration;
-import me.gleeming.command.paramter.Processor;
+import me.gleeming.command.paramter.ProcessorComplete;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-public class DurationProcessor implements Processor {
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class DurationProcessor implements ProcessorComplete {
+
+    private final List<String> defaults = Arrays.asList(
+            "perm", "5m", "30m", "1h", "2h",
+            "1d", "2d", "3d", "4d", "5d", "30d"
+    );
+
     public Object process(CommandSender sender, String supplied) {
         long duration = parseDuration(supplied);
 
@@ -38,5 +48,11 @@ public class DurationProcessor implements Processor {
 
             return value;
         } catch(Exception ignored) { return 0; }
+    }
+
+    public List<String> tabComplete(CommandSender sender, String supplied) {
+        return defaults.stream()
+                .filter(name -> name.toLowerCase().startsWith(supplied.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }

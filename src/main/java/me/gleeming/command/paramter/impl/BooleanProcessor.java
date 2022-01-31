@@ -1,13 +1,15 @@
 package me.gleeming.command.paramter.impl;
 
-import me.gleeming.command.paramter.Processor;
+import me.gleeming.command.paramter.ProcessorComplete;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class BooleanProcessor implements Processor {
+public class BooleanProcessor implements ProcessorComplete {
     private final Map<String, Boolean> values = new HashMap<>();
     public BooleanProcessor() {
         // Values that mean true
@@ -31,5 +33,9 @@ public class BooleanProcessor implements Processor {
         }
 
         return values.get(supplied);
+    }
+
+    public List<String> tabComplete(CommandSender sender, String supplied) {
+        return values.keySet().stream().filter(s -> s.toLowerCase().startsWith(supplied.toLowerCase())).collect(Collectors.toList());
     }
 }
