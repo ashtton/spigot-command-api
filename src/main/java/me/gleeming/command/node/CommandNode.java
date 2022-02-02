@@ -95,7 +95,7 @@ public class CommandNode {
             int nameLength = splitName.length;
 
             for(int i = 1; i < nameLength; i++)
-                if(args.length - 1 >= i) nameLabel.append(args[i - 1]).append(" ");
+                if(args.length>= i) nameLabel.append(args[i - 1]).append(" ");
 
             if(name.equalsIgnoreCase(nameLabel.toString().trim())) {
                 if(this.parameters.size() == 0) {
@@ -135,10 +135,6 @@ public class CommandNode {
                     probability.addAndGet(-15);
 
                 return;
-            }
-
-            if(name.contains("faction")) {
-                System.out.println(nameLabel + " - " + name);
             }
 
             String[] labelSplit = nameLabel.toString().split(" ");
