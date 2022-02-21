@@ -10,7 +10,7 @@ public class LongProcessor implements Processor {
             return Long.parseLong(supplied);
         } catch(Exception ex) {
             sender.sendMessage(ChatColor.RED + "The value you entered '" + supplied + "' is an invalid long.");
-            return null;
+            return 0L;
         }
     }
 }

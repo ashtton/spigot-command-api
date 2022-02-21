@@ -237,6 +237,11 @@ public class CommandNode {
             objects.add(object);
         }
 
+        if(args.length < requiredArgumentsLength()) {
+            sendUsageMessage(sender);
+            return;
+        }
+
         int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
         for(int i = 0; i < difference; i++) objects.add(null);
 

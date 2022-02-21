@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.gleeming.command.duration.Duration;
 import me.gleeming.command.node.ArgumentNode;
 import me.gleeming.command.paramter.impl.*;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -78,6 +79,7 @@ public class ParamProcessor {
         processors.put(Double.class, processors.get(double.class));
         processors.put(Boolean.class, processors.get(boolean.class));
 
+        processors.put(ChatColor.class, new ChatColorProcessor());
         processors.put(Player.class, new PlayerProcessor());
         processors.put(OfflinePlayer.class, new OfflinePlayerProcessor());
         processors.put(World.class, new WorldProcessor());

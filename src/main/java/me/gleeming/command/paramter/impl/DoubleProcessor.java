@@ -10,7 +10,7 @@ public class DoubleProcessor implements Processor {
             return Double.parseDouble(supplied);
         } catch(Exception ex) {
             sender.sendMessage(ChatColor.RED + "The value you entered '" + supplied + "' is an invalid double.");
-            return null;
+            return 0D;
         }
     }
 }

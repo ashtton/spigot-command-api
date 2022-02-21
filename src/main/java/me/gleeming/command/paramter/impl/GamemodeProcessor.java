@@ -23,6 +23,10 @@ public class GamemodeProcessor implements ProcessorComplete {
             return GameMode.ADVENTURE;
         }
 
+        if(supplied.equalsIgnoreCase("spectator") || supplied.equalsIgnoreCase("sp") || supplied.equals("3")) {
+            return GameMode.SPECTATOR;
+        }
+
         sender.sendMessage(ChatColor.RED + "The value you entered '" + supplied + "' is not a valid gamemode.");
         return null;
     }
