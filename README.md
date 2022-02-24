@@ -4,8 +4,9 @@ This is a Spigot Command API made by me, it's extremely useful & easy to use.
 * Creates usage messages for you
 * Automatically parses parameters
 * Easily register all your commands
-* No need for commands in plugin.yml  
+* No need for commands in plugin.yml
 * Makes it easier than ever to create commands
+* Tab completion based on your argument type
 ### Parsing
 At the moment, this command api will parse the following values for you.\
 You can also create custom processors which there is an example of at the bottom of this page.
@@ -99,7 +100,7 @@ public enum CustomEnum {
 }
 
 // Package: me.gleeming.plugin.processors
-public class CustomEnum implements Processor {
+public class CustomEnumProcessor implements Processor {
     public Object process(CommandSender sender, String supplied) {
         try {
             return CustomEnum.valueOf(supplied);
@@ -107,6 +108,27 @@ public class CustomEnum implements Processor {
             sender.sendMessage(ChatColor.RED + "You have entered an invalid value.");
             return null;
         }
+    }
+}
+
+// You can also create tab completion processors
+// for parameters to be auto completed by doing this
+// Package: me.gleeming.plugin.processors
+public class CustomEnumProcessor implements ProcessorComplete {
+    public Object process(CommandSender sender, String supplied) {
+        try {
+            return CustomEnum.valueOf(supplied);
+        } catch(Exception ex) {
+            sender.sendMessage(ChatColor.RED + "You have entered an invalid value.");
+            return null;
+        }
+    }
+    
+    public List<String> tabComplete(CommandSender sender, String supplied) {
+        return Arrays.stream(CustomEnum.values())
+            .map(ce -> ce.name())
+            .filter(name -> name.toLowerCase().startsWith(supplied.toLowerCase())
+            .collect(Collectors.toList());
     }
 }
 ```
