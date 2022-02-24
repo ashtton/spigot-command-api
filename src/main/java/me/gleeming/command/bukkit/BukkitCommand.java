@@ -53,23 +53,27 @@ public class BukkitCommand extends Command {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String label, String[] args) throws IllegalArgumentException {
-        List<CommandNode> sortedNodes = CommandNode.getNodes().stream()
-                .sorted(Comparator.comparingInt(node -> node.getMatchProbability(sender, label, args)))
-                .collect(Collectors.toList());
+        try {
+            List<CommandNode> sortedNodes = CommandNode.getNodes().stream()
+                    .sorted(Comparator.comparingInt(node -> node.getMatchProbability(sender, label, args)))
+                    .collect(Collectors.toList());
 
-        CommandNode node = sortedNodes.get(sortedNodes.size() - 1);
-        if(node.getMatchProbability(sender, label, args) >= 50) {
+            CommandNode node = sortedNodes.get(sortedNodes.size() - 1);
+            if(node.getMatchProbability(sender, label, args) >= 50) {
 
-            int extraLength = node.getNames().get(0).split(" ").length - 1;
-            int arg = (args.length - extraLength) - 1;
+                int extraLength = node.getNames().get(0).split(" ").length - 1;
+                int arg = (args.length - extraLength) - 1;
 
-            if(node.getParameters().size() < arg + 1)
-                return new ArrayList<>();
+                if(node.getParameters().size() < arg + 1)
+                    return new ArrayList<>();
 
-            ArgumentNode argumentNode = node.getParameters().get(arg);
-            return new ParamProcessor(argumentNode, args[args.length - 1], sender).getTabComplete();
+                ArgumentNode argumentNode = node.getParameters().get(arg);
+                return new ParamProcessor(argumentNode, args[args.length - 1], sender).getTabComplete();
+            }
+
+            return new ArrayList<>();
+        } catch(Exception exception) {
+            exception.printStackTrace();
         }
-
-        return new ArrayList<>();
     }
 }

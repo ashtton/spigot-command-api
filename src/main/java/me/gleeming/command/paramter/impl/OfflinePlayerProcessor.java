@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class OfflinePlayerProcessor implements ProcessorComplete {
@@ -25,6 +26,7 @@ public class OfflinePlayerProcessor implements ProcessorComplete {
     public List<String> tabComplete(CommandSender sender, String supplied) {
         return Arrays.stream(Bukkit.getOfflinePlayers())
                 .map(OfflinePlayer::getName)
+                .filter(Objects::nonNull)
                 .filter(name -> name.toLowerCase().startsWith(supplied.toLowerCase()))
                 .collect(Collectors.toList());
     }
