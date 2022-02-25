@@ -74,6 +74,7 @@ public class BukkitCommand extends Command {
             return new ArrayList<>();
         } catch(Exception exception) {
             exception.printStackTrace();
+            return new ArrayList<>();
         }
     }
 }

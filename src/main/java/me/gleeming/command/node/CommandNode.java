@@ -224,8 +224,11 @@ public class CommandNode {
             // Checks if the node is concatted
             if(node.isConcated()) {
                 StringBuilder stringBuilder = new StringBuilder();
-                for(int x = i; x < args.length; x++) stringBuilder.append(args[x + nameArgs]).append(" ");
-                objects.add(stringBuilder.toString());
+                for(int x = i; x < args.length; x++) {
+                    if(args.length - 1 < x + nameArgs) continue;
+                    stringBuilder.append(args[x + nameArgs]).append(" ");
+                }
+                objects.add(stringBuilder.substring(0, stringBuilder.toString().length() - 1));
                 break;
             }
 
