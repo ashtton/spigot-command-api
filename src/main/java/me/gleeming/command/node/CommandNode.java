@@ -116,7 +116,7 @@ public class CommandNode {
 
                 ArgumentNode lastArgument = this.parameters.get(this.parameters.size() - 1);
                 if(lastArgument.isConcated() && actualLength > requiredParameters) {
-                    probability.addAndGet(90);
+                    probability.addAndGet(125);
                     return;
                 }
 
