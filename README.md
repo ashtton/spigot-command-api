@@ -90,7 +90,10 @@ public class MainClass extends JavaPlugin {
         // in your on enable like this:
         
         // Make sure you do this before registering your commands
-        ParamProcessor.getProcessors().put(CustomEnum.class, new CustomEnumProcessor());
+        new CustomEnumProcessor();
+        
+        // You can initialize all the processors in a path using
+        CommandHandler.registerProcessors("me.gleeming.plugin.processors", this);
     }
 }
 
@@ -100,22 +103,9 @@ public enum CustomEnum {
 }
 
 // Package: me.gleeming.plugin.processors
-public class CustomEnumProcessor implements Processor {
-    public Object process(CommandSender sender, String supplied) {
-        try {
-            return CustomEnum.valueOf(supplied);
-        } catch(Exception ex) {
-            sender.sendMessage(ChatColor.RED + "You have entered an invalid value.");
-            return null;
-        }
-    }
-}
-
-// You can also create tab completion processors
-// for parameters to be auto completed by doing this
-// Package: me.gleeming.plugin.processors
-public class CustomEnumProcessor implements ProcessorComplete {
-    public Object process(CommandSender sender, String supplied) {
+public class CustomEnumProcessor extends Processor<CustomEnum> {
+    // This gets the actual value for the command
+    public CustomEnum process(CommandSender sender, String supplied) {
         try {
             return CustomEnum.valueOf(supplied);
         } catch(Exception ex) {
@@ -124,11 +114,12 @@ public class CustomEnumProcessor implements ProcessorComplete {
         }
     }
     
+    // You can optionally implement tab completions
     public List<String> tabComplete(CommandSender sender, String supplied) {
         return Arrays.stream(CustomEnum.values())
-            .map(ce -> ce.name())
-            .filter(name -> name.toLowerCase().startsWith(supplied.toLowerCase())
-            .collect(Collectors.toList());
+                .map(ce -> ce.name())
+                .filter(name -> name.toLowerCase().startsWith(supplied.toLowerCase())
+                .collect(Collectors.toList()));
     }
 }
 ```

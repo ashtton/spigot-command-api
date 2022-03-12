@@ -1,7 +1,7 @@
 package me.gleeming.command.paramter.impl;
 
 import me.gleeming.command.duration.Duration;
-import me.gleeming.command.paramter.ProcessorComplete;
+import me.gleeming.command.paramter.Processor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DurationProcessor implements ProcessorComplete {
+public class DurationProcessor extends Processor<Duration> {
 
     private final List<String> defaults = Arrays.asList(
             "perm", "5m", "30m", "1h", "2h",
             "1d", "2d", "3d", "4d", "5d", "30d"
     );
 
-    public Object process(CommandSender sender, String supplied) {
+    public Duration process(CommandSender sender, String supplied) {
         long duration = parseDuration(supplied);
 
         if(duration == 0) {
@@ -36,7 +36,8 @@ public class DurationProcessor implements ProcessorComplete {
     public static long parseDuration(String toParse) {
         try {
             toParse = toParse.toUpperCase();
-            if(toParse.equals("FOREVER") || toParse.equals("EVER") || toParse.equals("NEVER") || toParse.equals("PERM") || toParse.equals("PERMANENT")) return -1;
+            if(toParse.equals("FOREVER") || toParse.equals("EVER") || toParse.equals("NEVER") || toParse.equals("PERM") || toParse.equals("PERMANENT"))
+                return -1;
 
             long value = Long.parseLong(toParse.substring(0, toParse.length() - 1));
 

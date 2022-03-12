@@ -1,6 +1,6 @@
 package me.gleeming.command.paramter.impl;
 
-import me.gleeming.command.paramter.ProcessorComplete;
+import me.gleeming.command.paramter.Processor;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -9,8 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GamemodeProcessor implements ProcessorComplete {
-    public Object process(CommandSender sender, String supplied) {
+public class GamemodeProcessor extends Processor<GameMode> {
+
+    public GameMode process(CommandSender sender, String supplied) {
         if(supplied.equalsIgnoreCase("creative") || supplied.equalsIgnoreCase("c") || supplied.equals("1")) {
             return GameMode.CREATIVE;
         }

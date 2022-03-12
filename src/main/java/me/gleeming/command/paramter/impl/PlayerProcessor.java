@@ -1,6 +1,6 @@
 package me.gleeming.command.paramter.impl;
 
-import me.gleeming.command.paramter.ProcessorComplete;
+import me.gleeming.command.paramter.Processor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlayerProcessor implements ProcessorComplete {
-    public Object process(CommandSender sender, String supplied) {
+public class PlayerProcessor extends Processor<Player> {
+    public Player process(CommandSender sender, String supplied) {
         Player player = Bukkit.getPlayer(supplied);
 
         if(player == null) {

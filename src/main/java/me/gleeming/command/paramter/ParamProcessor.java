@@ -18,8 +18,7 @@ import java.util.List;
 
 @Data
 public class ParamProcessor {
-    @Getter private static final HashMap<Class<?>, Processor> processors = new HashMap<>();
-    private static boolean loaded = false;
+    @Getter private static final HashMap<Class<?>, Processor<?>> processors = new HashMap<>();
 
     private final ArgumentNode node;
     private final String supplied;
@@ -30,9 +29,9 @@ public class ParamProcessor {
      * @return Processed Object
      */
     public Object get() {
-        if(!loaded) loadProcessors();
+        if(processors.size() == 0) loadProcessors();
 
-        Processor processor = processors.get(node.getParameter().getType());
+        Processor<?> processor = processors.get(node.getParameter().getType());
         if(processor == null) return supplied;
 
         return processor.process(sender, supplied);
@@ -43,41 +42,28 @@ public class ParamProcessor {
      * @return Tab Completions
      */
     public List<String> getTabComplete() {
-        if(!loaded) loadProcessors();
-
-        Processor processor = processors.get(node.getParameter().getType());
+        Processor<?> processor = processors.get(node.getParameter().getType());
         if(processor == null) return new ArrayList<>();
 
-        if(processor instanceof ProcessorComplete)
-            return ((ProcessorComplete) processor).tabComplete(sender, supplied);
-
-        return new ArrayList<>();
+        return processor.tabComplete(sender, supplied);
     }
 
     /**
      * Creates a new processor
-     * @param type Type
      * @param processor Processor
      */
-    public static void createProcessor(Class<?> type, Processor processor) {
-        processors.put(type, processor);
+    public static void createProcessor(Processor<?> processor) {
+        processors.put(processor.getType(), processor);
     }
 
     /**
      * Loads the processors
      */
     public static void loadProcessors() {
-        loaded = true;
-
         processors.put(int.class, new IntegerProcessor());
         processors.put(long.class, new LongProcessor());
         processors.put(double.class, new DoubleProcessor());
         processors.put(boolean.class, new BooleanProcessor());
-
-        processors.put(Integer.class, processors.get(int.class));
-        processors.put(Long.class, processors.get(long.class));
-        processors.put(Double.class, processors.get(double.class));
-        processors.put(Boolean.class, processors.get(boolean.class));
 
         processors.put(ChatColor.class, new ChatColorProcessor());
         processors.put(Player.class, new PlayerProcessor());

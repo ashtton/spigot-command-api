@@ -1,6 +1,6 @@
 package me.gleeming.command.paramter.impl;
 
-import me.gleeming.command.paramter.ProcessorComplete;
+import me.gleeming.command.paramter.Processor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class OfflinePlayerProcessor implements ProcessorComplete {
-    public Object process(CommandSender sender, String supplied) {
+public class OfflinePlayerProcessor extends Processor<OfflinePlayer> {
+    public OfflinePlayer process(CommandSender sender, String supplied) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(supplied);
 
         if(player == null) {

@@ -4,8 +4,8 @@ import me.gleeming.command.paramter.Processor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-public class LongProcessor implements Processor {
-    public Object process(CommandSender sender, String supplied) {
+public class LongProcessor extends Processor<Long> {
+    public Long process(CommandSender sender, String supplied) {
         try {
             return Long.parseLong(supplied);
         } catch(Exception ex) {

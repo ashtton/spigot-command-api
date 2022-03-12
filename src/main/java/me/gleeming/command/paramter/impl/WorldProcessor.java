@@ -1,6 +1,6 @@
 package me.gleeming.command.paramter.impl;
 
-import me.gleeming.command.paramter.ProcessorComplete;
+import me.gleeming.command.paramter.Processor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WorldProcessor implements ProcessorComplete {
+public class WorldProcessor extends Processor<World> {
     @Override
-    public Object process(CommandSender sender, String supplied) {
+    public World process(CommandSender sender, String supplied) {
         World world = Bukkit.getWorld(supplied);
 
         if(world == null) {

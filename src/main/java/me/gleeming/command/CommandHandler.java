@@ -7,6 +7,8 @@ import lombok.SneakyThrows;
 import me.gleeming.command.help.Help;
 import me.gleeming.command.help.HelpNode;
 import me.gleeming.command.node.CommandNode;
+import me.gleeming.command.paramter.ParamProcessor;
+import me.gleeming.command.paramter.Processor;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
@@ -58,4 +60,20 @@ public class CommandHandler {
                     .forEach(helpName -> node.getHelpNodes().add(helpNode))));
         });
     }
+
+    /**
+     * Registers processors based off a file path
+     * @param path Path
+     */
+    @SneakyThrows
+    public static void registerProcessors(String path, Plugin plugin) {
+        ClassPath.from(plugin.getClass().getClassLoader()).getAllClasses().stream()
+                .filter(info -> info.getPackageName().startsWith(path))
+                .filter(info -> info.load().getSuperclass().equals(Processor.class))
+                .forEach(info -> {
+                    try { ParamProcessor.createProcessor((Processor<?>) info.load().newInstance());
+                    } catch(Exception exception) { exception.printStackTrace(); }
+                });
+    }
+
 }
