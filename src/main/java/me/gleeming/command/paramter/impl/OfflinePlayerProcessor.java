@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -24,10 +25,16 @@ public class OfflinePlayerProcessor extends Processor<OfflinePlayer> {
     }
 
     public List<String> tabComplete(CommandSender sender, String supplied) {
+        // Otherwise, once you have a lot of players
+        // that have joined the server, this will lag
+        if(supplied.length() < 3)
+            return new ArrayList<>();
+
         return Arrays.stream(Bukkit.getOfflinePlayers())
                 .map(OfflinePlayer::getName)
                 .filter(Objects::nonNull)
                 .filter(name -> name.toLowerCase().startsWith(supplied.toLowerCase()))
+                .limit(100)
                 .collect(Collectors.toList());
     }
 }
