@@ -19,6 +19,7 @@ import java.util.List;
 @Data
 public class ParamProcessor {
     @Getter private static final HashMap<Class<?>, Processor<?>> processors = new HashMap<>();
+    private static boolean loaded = false;
 
     private final ArgumentNode node;
     private final String supplied;
@@ -29,7 +30,7 @@ public class ParamProcessor {
      * @return Processed Object
      */
     public Object get() {
-        if(processors.size() == 0) loadProcessors();
+        if(!loaded) loadProcessors();
 
         Processor<?> processor = processors.get(node.getParameter().getType());
         if(processor == null) return supplied;
@@ -42,6 +43,8 @@ public class ParamProcessor {
      * @return Tab Completions
      */
     public List<String> getTabComplete() {
+        if(!loaded) loadProcessors();
+
         Processor<?> processor = processors.get(node.getParameter().getType());
         if(processor == null) return new ArrayList<>();
 
@@ -60,6 +63,8 @@ public class ParamProcessor {
      * Loads the processors
      */
     public static void loadProcessors() {
+        loaded = true;
+
         processors.put(int.class, new IntegerProcessor());
         processors.put(long.class, new LongProcessor());
         processors.put(double.class, new DoubleProcessor());
