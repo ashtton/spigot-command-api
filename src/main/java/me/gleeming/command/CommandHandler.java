@@ -53,7 +53,7 @@ public class CommandHandler {
             Help help = method.getAnnotation(Help.class);
             if(help == null) return;
 
-            HelpNode helpNode = new HelpNode(commandClass, help.names(), method);
+            HelpNode helpNode = new HelpNode(commandClass, help.names(), help.permission(), method);
             CommandNode.getNodes().forEach(node -> node.getNames().forEach(name -> Arrays.stream(help.names())
                     .map(String::toLowerCase)
                     .filter(helpName -> name.toLowerCase().startsWith(helpName))

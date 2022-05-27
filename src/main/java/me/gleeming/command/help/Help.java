@@ -12,4 +12,9 @@ public @interface Help {
      * The names to catch for help
      */
     String[] names();
+
+    /**
+     * The permission to get the help message
+     */
+    String permission() default "";
 }

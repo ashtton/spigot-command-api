@@ -7,5 +7,6 @@ import java.lang.reflect.Method;
 public class HelpNode {
     private final Object parentClass;
     private final String[] names;
+    private final String permission;
     private final Method method;
 }
