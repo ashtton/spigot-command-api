@@ -32,11 +32,11 @@ public class BukkitCommand extends Command {
     @SneakyThrows
     public boolean execute(CommandSender sender, String label, String[] args) {
         List<CommandNode> sortedNodes = CommandNode.getNodes().stream()
-                .sorted(Comparator.comparingInt(node -> node.getMatchProbability(sender, label, args)))
+                .sorted(Comparator.comparingInt(node -> node.getMatchProbability(sender, label, args, false)))
                 .collect(Collectors.toList());
 
         CommandNode node = sortedNodes.get(sortedNodes.size() - 1);
-        if(node.getMatchProbability(sender, label, args) < 90) {
+        if(node.getMatchProbability(sender, label, args, false) < 90) {
             if(node.getHelpNodes().size() == 0) {
                 node.sendUsageMessage(sender);
                 return false;
@@ -61,11 +61,11 @@ public class BukkitCommand extends Command {
     public List<String> tabComplete(CommandSender sender, String label, String[] args) throws IllegalArgumentException {
         try {
             List<CommandNode> sortedNodes = CommandNode.getNodes().stream()
-                    .sorted(Comparator.comparingInt(node -> node.getMatchProbability(sender, label, args)))
+                    .sorted(Comparator.comparingInt(node -> node.getMatchProbability(sender, label, args, true)))
                     .collect(Collectors.toList());
 
             CommandNode node = sortedNodes.get(sortedNodes.size() - 1);
-            if(node.getMatchProbability(sender, label, args) >= 50) {
+            if(node.getMatchProbability(sender, label, args, true) >= 50) {
 
                 int extraLength = node.getNames().get(0).split(" ").length - 1;
                 int arg = (args.length - extraLength) - 1;
@@ -77,7 +77,14 @@ public class BukkitCommand extends Command {
                 return new ParamProcessor(argumentNode, args[args.length - 1], sender).getTabComplete();
             }
 
-            return new ArrayList<>();
+            List<String> completions = new ArrayList<>();
+            sortedNodes.forEach(sortedNode -> sortedNode.getNames().stream()
+                    .map(name -> name.split(" "))
+                    .filter(splitName -> splitName[0].equalsIgnoreCase(label))
+                    .filter(splitName -> splitName.length > args.length)
+                    .forEach(splitName -> completions.add(splitName[args.length])));
+
+            return completions;
         } catch(Exception exception) {
             exception.printStackTrace();
             return new ArrayList<>();

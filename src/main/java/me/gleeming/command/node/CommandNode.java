@@ -86,7 +86,7 @@ public class CommandNode {
      * @param args Arguments
      * @return Match Probability
      */
-    public int getMatchProbability(CommandSender sender, String label, String[] args) {
+    public int getMatchProbability(CommandSender sender, String label, String[] args, boolean tabbed) {
         AtomicInteger probability = new AtomicInteger(0);
 
         this.names.forEach(name -> {
@@ -98,11 +98,6 @@ public class CommandNode {
                 if(args.length>= i) nameLabel.append(args[i - 1]).append(" ");
 
             if(name.equalsIgnoreCase(nameLabel.toString().trim())) {
-                if(this.parameters.size() == 0) {
-                    probability.addAndGet(100);
-                    return;
-                }
-
                 int requiredParameters = (int) this.parameters.stream()
                         .filter(ArgumentNode::isRequired)
                         .count();
@@ -114,13 +109,16 @@ public class CommandNode {
                     return;
                 }
 
-                ArgumentNode lastArgument = this.parameters.get(this.parameters.size() - 1);
-                if(lastArgument.isConcated() && actualLength > requiredParameters) {
-                    probability.addAndGet(125);
-                    return;
+                if(this.parameters.size() > 0) {
+                    ArgumentNode lastArgument = this.parameters.get(this.parameters.size() - 1);
+                    if (lastArgument.isConcated() && actualLength > requiredParameters) {
+                        probability.addAndGet(125);
+                        return;
+                    }
                 }
 
-                probability.addAndGet(50);
+                if(!tabbed)
+                    probability.addAndGet(50);
 
                 if(actualLength > requiredParameters)
                     probability.addAndGet(15);
@@ -140,7 +138,7 @@ public class CommandNode {
             String[] labelSplit = nameLabel.toString().split(" ");
             for(int i = 0; i < nameLength && i < labelSplit.length; i++)
                 if(splitName[i].equalsIgnoreCase(labelSplit[i]))
-                    probability.addAndGet(10);
+                    probability.addAndGet(20);
 
         });
 
