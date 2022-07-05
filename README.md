@@ -6,13 +6,14 @@ This is a Spigot Command API made by me, it's extremely useful & easy to use.
 * Easily register all your commands
 * No need for commands in plugin.yml
 * Makes it easier than ever to create commands
-* Tab completion based on your argument type
+* Automatic tab completion
+* Tab completion for your custom objects via processors
 ### Parsing
 At the moment, this command api will parse the following values for you.\
 You can also create custom processors which there is an example of at the bottom of this page.
 * **Numbers:** Integer, Long, Double
 * **Players:** Player, OfflinePlayer
-* **Misc:** World, Boolean, Duration
+* **Misc:** World, Boolean, Duration, ChatColor, Gamemode
 ### Command Example
 This example shows you the basics of using the api
 ```java
