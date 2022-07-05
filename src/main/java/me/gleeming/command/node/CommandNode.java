@@ -117,7 +117,7 @@ public class CommandNode {
                     }
                 }
 
-                if(!tabbed)
+                if(!tabbed || splitName.length > 1 || parameters.size() > 0)
                     probability.addAndGet(50);
 
                 if(actualLength > requiredParameters)

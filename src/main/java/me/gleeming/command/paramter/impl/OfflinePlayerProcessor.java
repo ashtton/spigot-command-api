@@ -25,11 +25,6 @@ public class OfflinePlayerProcessor extends Processor<OfflinePlayer> {
     }
 
     public List<String> tabComplete(CommandSender sender, String supplied) {
-        // Otherwise, once you have a lot of players
-        // that have joined the server, this will lag
-        if(supplied.length() < 3)
-            return new ArrayList<>();
-
         return Arrays.stream(Bukkit.getOfflinePlayers())
                 .map(OfflinePlayer::getName)
                 .filter(Objects::nonNull)
