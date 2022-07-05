@@ -70,7 +70,7 @@ public class BukkitCommand extends Command {
                 int extraLength = node.getNames().get(0).split(" ").length - 1;
                 int arg = (args.length - extraLength) - 1;
 
-                if(node.getParameters().size() < arg + 1)
+                if(arg < 0 || node.getParameters().size() < arg + 1)
                     return new ArrayList<>();
 
                 ArgumentNode argumentNode = node.getParameters().get(arg);
