@@ -1,5 +1,7 @@
 package me.gleeming.command.bukkit;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.gleeming.command.CommandHandler;
@@ -86,6 +88,7 @@ public class BukkitCommand extends Command {
                             .map(splitName -> splitName[args.length])
                             .collect(Collectors.toList()))
                     .flatMap(List::stream)
+                    .filter(name -> name.toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
                     .collect(Collectors.toList());
         } catch(Exception exception) {
             exception.printStackTrace();
