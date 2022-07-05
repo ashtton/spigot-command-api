@@ -77,14 +77,16 @@ public class BukkitCommand extends Command {
                 return new ParamProcessor(argumentNode, args[args.length - 1], sender).getTabComplete();
             }
 
-            List<String> completions = new ArrayList<>();
-            sortedNodes.forEach(sortedNode -> sortedNode.getNames().stream()
-                    .map(name -> name.split(" "))
-                    .filter(splitName -> splitName[0].equalsIgnoreCase(label))
-                    .filter(splitName -> splitName.length > args.length)
-                    .forEach(splitName -> completions.add(splitName[args.length])));
-
-            return completions;
+            return sortedNodes.stream()
+                    .filter(sortedNode -> sortedNode.getPermission().isEmpty() || sender.hasPermission(sortedNode.getPermission()))
+                    .map(sortedNode -> sortedNode.getNames().stream()
+                            .map(name -> name.split(" "))
+                            .filter(splitName -> splitName[0].equalsIgnoreCase(label))
+                            .filter(splitName -> splitName.length > args.length)
+                            .map(splitName -> splitName[args.length])
+                            .collect(Collectors.toList()))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
         } catch(Exception exception) {
             exception.printStackTrace();
             return new ArrayList<>();
