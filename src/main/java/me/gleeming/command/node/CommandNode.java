@@ -138,8 +138,7 @@ public class CommandNode {
             String[] labelSplit = nameLabel.toString().split(" ");
             for(int i = 0; i < nameLength && i < labelSplit.length; i++)
                 if(splitName[i].equalsIgnoreCase(labelSplit[i]))
-                    probability.addAndGet(20);
-
+                    probability.addAndGet(5);
         });
 
         return probability.get();
