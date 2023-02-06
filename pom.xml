@@ -23,12 +23,12 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>athen-studios</id>
-            <url>https://repo.athenstudios.net/repository/athen-studios-minecraft/</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <repositories>
+        <repository>
+            <id>spigot-hub</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

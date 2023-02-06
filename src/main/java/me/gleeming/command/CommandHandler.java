@@ -41,7 +41,7 @@ public class CommandHandler {
      * Registers the commands in the class
      * @param commandClass Class
      */
-    private static void registerCommands(Object commandClass) {
+    public static void registerCommands(Object commandClass) {
         Arrays.stream(commandClass.getClass().getDeclaredMethods()).forEach(method -> {
             Command command = method.getAnnotation(Command.class);
             if(command == null) return;
