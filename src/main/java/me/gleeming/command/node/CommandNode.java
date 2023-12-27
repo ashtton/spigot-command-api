@@ -243,8 +243,21 @@ public class CommandNode {
         }
 
         int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
-        for(int i = 0; i < difference; i++)
-            objects.add(parameters.get(requiredArgumentsLength() + i).getDefaultValue());
+        for(int i = 0; i < difference; i++) {
+            ArgumentNode argumentNode = parameters.get(requiredArgumentsLength() + i - 1);
+
+            if (argumentNode.getDefaultValue() == null) {
+                objects.add(null);
+                continue;
+            }
+
+            objects.add(new ParamProcessor(argumentNode, argumentNode.getDefaultValue(), sender).get());
+        }
+
+        System.out.println("invoking with: ");
+        objects.forEach(obj -> {
+            System.out.println(obj.getClass().getSimpleName());
+        });
 
         if(async) {
             Bukkit.getScheduler().runTaskAsynchronously(CommandHandler.getPlugin(), () -> {
