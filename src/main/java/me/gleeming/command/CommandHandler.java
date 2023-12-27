@@ -39,6 +39,18 @@ public class CommandHandler {
 
     /**
      * Registers the commands in the class
+     * @param commandClasses Classes
+     */
+    @SneakyThrows
+    public static void registerCommands(Plugin plugin, Class<?>... commandClasses) {
+        CommandHandler.setPlugin(plugin);
+        for (Class<?> commandClass : commandClasses) {
+            registerCommands(commandClass.newInstance());
+        }
+    }
+
+    /**
+     * Registers the commands in the class
      * @param commandClass Class
      */
     public static void registerCommands(Object commandClass) {
