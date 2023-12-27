@@ -254,11 +254,6 @@ public class CommandNode {
             objects.add(new ParamProcessor(argumentNode, argumentNode.getDefaultValue(), sender).get());
         }
 
-        System.out.println("invoking with: ");
-        objects.forEach(obj -> {
-            System.out.println(obj.getClass().getSimpleName());
-        });
-
         if(async) {
             Bukkit.getScheduler().runTaskAsynchronously(CommandHandler.getPlugin(), () -> {
                 try { method.invoke(parentClass, objects.toArray()); } catch(Exception exception) { exception.printStackTrace(); }
