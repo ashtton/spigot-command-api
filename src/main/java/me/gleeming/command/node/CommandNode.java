@@ -63,7 +63,7 @@ public class CommandNode {
             Param param = parameter.getAnnotation(Param.class);
             if(param == null) return;
 
-            parameters.add(new ArgumentNode(param.name(), param.concated(), param.required(), parameter));
+            parameters.add(new ArgumentNode(param.name(), param.concated(), param.required(), param.defaultValue(), parameter));
         });
 
         // Register bukkit command if it doesn't exist
@@ -243,7 +243,8 @@ public class CommandNode {
         }
 
         int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
-        for(int i = 0; i < difference; i++) objects.add(null);
+        for(int i = 0; i < difference; i++)
+            objects.add(parameters.get(requiredArgumentsLength() + i).getDefaultValue());
 
         if(async) {
             Bukkit.getScheduler().runTaskAsynchronously(CommandHandler.getPlugin(), () -> {

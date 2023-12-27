@@ -11,6 +11,8 @@ public class ArgumentNode {
     private final boolean concated;
     private final boolean required;
 
+    private final String defaultValue;
+
     // Reflection information
     private final Parameter parameter;
 }

@@ -23,4 +23,10 @@ public @interface Param {
      * Checks to see if a parameter is required
      */
     boolean required() default true;
+
+    /**
+     * Used as the default value if required is false
+     * and no parameter parse is provided.
+     */
+    String defaultValue() default "";
 }
