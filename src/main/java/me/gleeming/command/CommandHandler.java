@@ -88,4 +88,19 @@ public class CommandHandler {
                 });
     }
 
+    /**
+     * Register processor
+     * @param processor Processor
+     */
+    public static void registerProcessor(Processor<?> processor) {
+        ParamProcessor.createProcessor(processor);
+    }
+
+    /**
+     * Register processors
+     * @param processors Processors
+     */
+    public static void registerProcessors(Processor<?>... processors) {
+        Arrays.stream(processors).forEach(CommandHandler::registerProcessor);
+    }
 }
