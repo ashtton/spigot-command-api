@@ -14,10 +14,20 @@ public abstract class Processor<T> {
 
     private final Class<?> type;
 
+
     @SneakyThrows
     public Processor() {
+        // can cause ClassNotFoundException with Loader based plugins
         Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         this.type = Class.forName(type.getTypeName());
+        ParamProcessor.createProcessor(this);
+    }
+
+    // This constructor makes it easier for Loader based plugins to create processors
+    // ensures that the Processor constructor has a reference to the type, and doesn't need to use reflection to determine the class.
+    @SneakyThrows
+    public Processor(Class<?> type) {
+        this.type = type;
         ParamProcessor.createProcessor(this);
     }
 
