@@ -20,8 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 public class CommandNode {
-    @Getter private static final List<CommandNode> nodes = new ArrayList<>();
-    @Getter private static final HashMap<Class<?>, Object> instances = new HashMap<>();
+    @Getter
+    private static final List<CommandNode> nodes = new ArrayList<>();
+    @Getter
+    private static final HashMap<Class<?>, Object> instances = new HashMap<>();
 
     // Command information
     private final ArrayList<String> names = new ArrayList<>();
@@ -61,14 +63,15 @@ public class CommandNode {
         // Register all the argument nodes
         Arrays.stream(method.getParameters()).forEach(parameter -> {
             Param param = parameter.getAnnotation(Param.class);
-            if(param == null) return;
+            if (param == null) return;
 
             parameters.add(new ArgumentNode(param.name(), param.concated(), param.required(), param.defaultValue(), parameter));
         });
 
         // Register bukkit command if it doesn't exist
         names.forEach(name -> {
-            if(!BukkitCommand.getCommands().containsKey(name.split(" ")[0].toLowerCase())) new BukkitCommand(name.split(" ")[0].toLowerCase());
+            if (!BukkitCommand.getCommands().containsKey(name.split(" ")[0].toLowerCase()))
+                new BukkitCommand(name.split(" ")[0].toLowerCase());
         });
 
         // Makes it so you can use /plugin:command
@@ -83,6 +86,7 @@ public class CommandNode {
     /**
      * Gets the probably that a player is referring to
      * this command whenever executing a command
+     *
      * @param args Arguments
      * @return Match Probability
      */
@@ -94,22 +98,22 @@ public class CommandNode {
             String[] splitName = name.split(" ");
             int nameLength = splitName.length;
 
-            for(int i = 1; i < nameLength; i++)
-                if(args.length>= i) nameLabel.append(args[i - 1]).append(" ");
+            for (int i = 1; i < nameLength; i++)
+                if (args.length >= i) nameLabel.append(args[i - 1]).append(" ");
 
-            if(name.equalsIgnoreCase(nameLabel.toString().trim())) {
+            if (name.equalsIgnoreCase(nameLabel.toString().trim())) {
                 int requiredParameters = (int) this.parameters.stream()
                         .filter(ArgumentNode::isRequired)
                         .count();
 
                 int actualLength = args.length - (nameLength - 1);
 
-                if(requiredParameters == actualLength || parameters.size() == actualLength) {
+                if (requiredParameters == actualLength || parameters.size() == actualLength) {
                     probability.addAndGet(125);
                     return;
                 }
 
-                if(this.parameters.size() > 0) {
+                if (this.parameters.size() > 0) {
                     ArgumentNode lastArgument = this.parameters.get(this.parameters.size() - 1);
                     if (lastArgument.isConcated() && actualLength > requiredParameters) {
                         probability.addAndGet(125);
@@ -117,27 +121,27 @@ public class CommandNode {
                     }
                 }
 
-                if(!tabbed || splitName.length > 1 || parameters.size() > 0)
+                if (!tabbed || splitName.length > 1 || parameters.size() > 0)
                     probability.addAndGet(50);
 
-                if(actualLength > requiredParameters)
+                if (actualLength > requiredParameters)
                     probability.addAndGet(15);
 
-                if(sender instanceof Player && consoleOnly)
+                if (sender instanceof Player && consoleOnly)
                     probability.addAndGet(-15);
 
-                if(!(sender instanceof Player) && playerOnly)
+                if (!(sender instanceof Player) && playerOnly)
                     probability.addAndGet(-15);
 
-                if(!permission.equals("") && !sender.hasPermission(permission))
+                if (!permission.equals("") && !sender.hasPermission(permission))
                     probability.addAndGet(-15);
 
                 return;
             }
 
             String[] labelSplit = nameLabel.toString().split(" ");
-            for(int i = 0; i < nameLength && i < labelSplit.length; i++)
-                if(splitName[i].equalsIgnoreCase(labelSplit[i]))
+            for (int i = 0; i < nameLength && i < labelSplit.length; i++)
+                if (splitName[i].equalsIgnoreCase(labelSplit[i]))
                     probability.addAndGet(5);
         });
 
@@ -148,24 +152,25 @@ public class CommandNode {
      * Sends a player the usage message of this command
      */
     public void sendUsageMessage(CommandSender sender) {
-        if(consoleOnly && sender instanceof Player) {
+        if (consoleOnly && sender instanceof Player) {
             sender.sendMessage(ChatColor.RED + "This command can only be executed by console.");
             return;
         }
 
-        if(playerOnly && sender instanceof ConsoleCommandSender) {
+        if (playerOnly && sender instanceof ConsoleCommandSender) {
             sender.sendMessage(ChatColor.RED + "You must be a player to execute this command.");
             return;
         }
 
-        if(!permission.equals("") && !sender.hasPermission(permission)) {
+        if (!permission.equals("") && !sender.hasPermission(permission)) {
             sender.sendMessage(ChatColor.RED + "I'm sorry, although you do not have permission to execute this command.");
             return;
         }
 
         StringBuilder builder = new StringBuilder(ChatColor.RED + "Usage: /" + names.get(0) + " ");
         parameters.forEach(param -> {
-            if(param.isRequired()) builder.append("<").append(param.getName()).append(param.isConcated() ? ".." : "").append(">");
+            if (param.isRequired())
+                builder.append("<").append(param.getName()).append(param.isConcated() ? ".." : "").append(">");
             else builder.append("[").append(param.getName()).append(param.isConcated() ? ".." : "").append("]");
             builder.append(" ");
         });
@@ -176,11 +181,12 @@ public class CommandNode {
 
     /**
      * Gets the required arguments length
+     *
      * @return Required Length
      */
     public int requiredArgumentsLength() {
         int requiredArgumentsLength = names.get(0).split(" ").length - 1;
-        for(ArgumentNode node : parameters) if(node.isRequired()) requiredArgumentsLength++;
+        for (ArgumentNode node : parameters) if (node.isRequired()) requiredArgumentsLength++;
         return requiredArgumentsLength;
     }
 
@@ -188,24 +194,24 @@ public class CommandNode {
      * Executes the command
      *
      * @param sender Sender
-     * @param args Arguments
+     * @param args   Arguments
      */
     @SneakyThrows
     public void execute(CommandSender sender, String[] args) {
         // Checks if the player has permission
-        if(!permission.equals("") && !sender.hasPermission(permission)) {
+        if (!permission.equals("") && !sender.hasPermission(permission)) {
             sender.sendMessage(ChatColor.RED + "I'm sorry, although you do not have permission to execute this command.");
             return;
         }
 
         // Checks if command is console only
-        if(sender instanceof ConsoleCommandSender && playerOnly) {
+        if (sender instanceof ConsoleCommandSender && playerOnly) {
             sender.sendMessage(ChatColor.RED + "You must be a player to execute this command.");
             return;
         }
 
         // Checks if command is player only
-        if(sender instanceof Player && consoleOnly) {
+        if (sender instanceof Player && consoleOnly) {
             sender.sendMessage(ChatColor.RED + "This command is only executable by console.");
             return;
         }
@@ -214,15 +220,14 @@ public class CommandNode {
         int nameArgs = (names.get(0).split(" ").length - 1);
 
         List<Object> objects = new ArrayList<>(Collections.singletonList(sender));
-        for(int i = 0; i < args.length - nameArgs; i++) {
-            if(parameters.size() < i + 1) break;
+        for (int i = 0; i < args.length - nameArgs; i++) {
+            if (parameters.size() <= i) break;
             ArgumentNode node = parameters.get(i);
 
-            // Checks if the node is concatted
-            if(node.isConcated()) {
+            // Checks if the node is concated
+            if (node.isConcated()) {
                 StringBuilder stringBuilder = new StringBuilder();
-                for(int x = i; x < args.length; x++) {
-                    if(args.length - 1 < x + nameArgs) continue;
+                for (int x = i; x < args.length - nameArgs; x++) {
                     stringBuilder.append(args[x + nameArgs]).append(" ");
                 }
                 objects.add(stringBuilder.substring(0, stringBuilder.toString().length() - 1));
@@ -233,30 +238,40 @@ public class CommandNode {
             Object object = new ParamProcessor(node, suppliedArgument, sender).get();
 
             // If the object is returning null then that means there was a problem parsing
-            if(object == null) return;
+            if (object == null) return;
             objects.add(object);
         }
 
-        if(args.length < requiredArgumentsLength()) {
+        if (args.length < requiredArgumentsLength()) {
             sendUsageMessage(sender);
             return;
         }
 
         int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
-        for(int i = 0; i < difference; i++) {
-            ArgumentNode argumentNode = parameters.get(requiredArgumentsLength() + i - 1);
+        for (int i = 0; i < difference; i++) {
+            int indexToAccess = requiredArgumentsLength() + i;
+            if (indexToAccess >= 0 && indexToAccess < parameters.size()) {
+                ArgumentNode argumentNode = parameters.get(indexToAccess);
 
-            if (argumentNode.getDefaultValue() == null) {
-                objects.add(null);
-                continue;
+                if (argumentNode.getDefaultValue() == null) {
+                    objects.add(null);
+                    continue;
+                }
+
+                objects.add(new ParamProcessor(argumentNode, argumentNode.getDefaultValue(), sender).get());
+            } else {
+                sender.sendMessage(ChatColor.RED + "An error occurred processing your command.");
+                return;
             }
-
-            objects.add(new ParamProcessor(argumentNode, argumentNode.getDefaultValue(), sender).get());
         }
 
-        if(async) {
+        if (async) {
             Bukkit.getScheduler().runTaskAsynchronously(CommandHandler.getPlugin(), () -> {
-                try { method.invoke(parentClass, objects.toArray()); } catch(Exception exception) { exception.printStackTrace(); }
+                try {
+                    method.invoke(parentClass, objects.toArray());
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             });
             return;
         }
