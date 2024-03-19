@@ -243,15 +243,21 @@ public class CommandNode {
         }
 
         int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
-        for(int i = 0; i < difference; i++) {
-            ArgumentNode argumentNode = parameters.get(requiredArgumentsLength() + i - 1);
+        for (int i = 0; i < difference; i++) {
+            int indexToAccess = requiredArgumentsLength() + i;
+            if (indexToAccess >= 0 && indexToAccess < parameters.size()) {
+                ArgumentNode argumentNode = parameters.get(indexToAccess);
 
-            if (argumentNode.getDefaultValue() == null) {
-                objects.add(null);
-                continue;
+                if (argumentNode.getDefaultValue() == null) {
+                    objects.add(null);
+                    continue;
+                }
+
+                objects.add(new ParamProcessor(argumentNode, argumentNode.getDefaultValue(), sender).get());
+            } else {
+                sender.sendMessage(ChatColor.RED + "An error occurred processing your command.");
+                return;
             }
-
-            objects.add(new ParamProcessor(argumentNode, argumentNode.getDefaultValue(), sender).get());
         }
 
         if(async) {
