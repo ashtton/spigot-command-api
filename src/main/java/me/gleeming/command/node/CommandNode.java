@@ -244,7 +244,7 @@ public class CommandNode {
 
         int difference = (parameters.size() - requiredArgumentsLength()) - ((args.length - nameArgs) - requiredArgumentsLength());
         for(int i = 0; i < difference; i++) {
-            ArgumentNode argumentNode = parameters.get(requiredArgumentsLength() + i - 1);
+            ArgumentNode argumentNode = parameters.get(requiredArgumentsLength() + i);
 
             if (argumentNode.getDefaultValue() == null) {
                 objects.add(null);
