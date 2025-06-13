@@ -63,7 +63,7 @@ public class CommandNode {
             Param param = parameter.getAnnotation(Param.class);
             if(param == null) return;
 
-            parameters.add(new ArgumentNode(param.name(), param.concated(), param.required(), param.defaultValue(), parameter));
+            parameters.add(new ArgumentNode(param.name(), param.concated(), param.required(), param.defaultValue().isEmpty() ? null : param.defaultValue(), parameter));
         });
 
         // Register bukkit command if it doesn't exist
