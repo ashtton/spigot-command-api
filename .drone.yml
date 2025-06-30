@@ -1,0 +1,20 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: publish
+    image: gradle:jdk17
+    environment:
+      MAVEN_USERNAME:
+        from_secret: nexus_username
+      MAVEN_PASSWORD:
+        from_secret: nexus_password
+    commands:
+      - gradle publish
+
+trigger:
+  branch:
+    - master
+...

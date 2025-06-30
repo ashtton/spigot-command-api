@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'io.freefair.lombok' version '8.13.1'
+    id 'maven-publish'
+    id 'com.gradleup.shadow' version '8.3.3'
+}
+
+group 'me.gleeming.command'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) {
+            publication -> project.shadow.component(publication)
+        }
+    }
+
+    repositories {
+        maven {
+            url "https://repo.trinsic.dev/repository/trinsic-public/"
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
+}
+
+dependencies {
+    compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
+        exclude group: 'net.md-5'
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
