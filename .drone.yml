@@ -12,6 +12,7 @@ steps:
       MAVEN_PASSWORD:
         from_secret: nexus_password
     commands:
+      - gradle shadowjar
       - gradle publish
 
 trigger:
