@@ -1,3 +1,4 @@
-target/
-depdency-reduced-pom.xml
+.gradle/
 .idea/
+build/
+target/
